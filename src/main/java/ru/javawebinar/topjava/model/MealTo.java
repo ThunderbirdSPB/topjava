@@ -25,11 +25,6 @@ public class MealTo {
         return dateTime;
     }
 
-    // for filteredBySetterRecursion
-    public void setExcess(boolean excess) {
-        this.excess = excess;
-    }
-
     public Integer getId() {
         return id;
     }
