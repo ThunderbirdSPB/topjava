@@ -24,6 +24,14 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
+    <form method="get" action="meals">
+        <input name="action" value="filter" type="hidden">
+        <input name="dateFrom" type="date" placeholder="Input date from">
+        <input name="dateTill" type="date" placeholder="Input date till">
+        <input name="timeFrom" type="time" placeholder="Input time from">
+        <input name="timeTill" type="time" placeholder="Input time till">
+        <input type="submit" value="submit">
+    </form>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

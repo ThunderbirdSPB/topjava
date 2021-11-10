@@ -7,7 +7,7 @@ import java.time.LocalTime;
 public class Meal extends AbstractBaseEntity{
     private final LocalDateTime dateTime;
 
-    private final String description;
+    private String description;
 
     private final int calories;
 
@@ -40,6 +40,11 @@ public class Meal extends AbstractBaseEntity{
 
     public LocalTime getTime() {
         return dateTime.toLocalTime();
+    }
+
+    public Meal setDescription(String desc){
+        description = desc;
+        return this;
     }
 
     @Override
