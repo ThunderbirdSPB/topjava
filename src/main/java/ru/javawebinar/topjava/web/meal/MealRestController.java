@@ -2,15 +2,21 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 import static ru.javawebinar.topjava.web.SecurityUtil.*;
 
 @Controller
@@ -22,29 +28,51 @@ public class MealRestController {
         this.service = service;
     }
 
-    public void create(Meal meal){
-        log.info("create{}", meal);
-        ValidationUtil.checkNew(meal);
-        service.save(authUserId(), meal);
-    }
+    public Meal get(int mealId) {
+        int userId = SecurityUtil.authUserId();
+        log.info("get meal {} for user {}", mealId, userId);
 
-    public void update(Meal meal){
-        log.info("update{}", meal);
-        service.save(authUserId(), meal);
+        return service.get(userId, mealId);
     }
 
     public void delete(int mealId){
-        log.info("delete {}", mealId);
-        service.delete(authUserId(), mealId);
-    }
-
-    public MealTo get(int mealId){
-        log.info("get {}", mealId);
-        return getAll().stream().filter(meal -> mealId == meal.getId()).findFirst().orElse(null);
+        int userId = SecurityUtil.authUserId();
+        log.info("delete meal {} for user {}", mealId, userId);
+        service.delete(userId, mealId);
     }
 
     public List<MealTo> getAll(){
-        log.info("getAll");
-        return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
+        int userId = SecurityUtil.authUserId();
+        log.info("getAll for user {}", userId);
+        return MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
+    }
+
+    public Meal create(Meal meal){
+        int userId = SecurityUtil.authUserId();
+        checkNew(meal);
+        log.info("create {} for user {}", meal, userId);
+        return service.create(meal, userId);
+    }
+
+    public void update(Meal meal, int mealId){
+        int userId = SecurityUtil.authUserId();
+        assureIdConsistent(meal, mealId);
+        log.info("update {} for user {}", meal, userId);
+        service.update(meal, userId);
+    }
+
+    /**
+     * <ol>Filter separately
+     * <li>by date</li>
+     * <li>by time for every date</li>
+     * </ol>
+     */
+    public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
+                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+        int userId = SecurityUtil.authUserId();
+        log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
+
+        List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
+        return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }
 }
