@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +8,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-
-
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.util.Collection;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.Month;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.*;
-import static org.junit.Assert.assertThrows;
-
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -32,80 +27,85 @@ import static org.junit.Assert.assertThrows;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     @Autowired
-    private MealService mealService;
+    private MealService service;
 
     @Test
-    public void update() {
-        Meal updated = getUpdatedMeal();
-        mealService.update(updated, ADMIN_ID);
-        assertThat(mealService.get(ADMIN_ID, updated.getId())).usingRecursiveComparison().isEqualTo(updated);
+    public void delete() {
+        service.delete(MEAL1_ID, USER_ID);
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
-    public void updateNotExistingMeal(){
-        assertThatThrownBy(() -> mealService.update(NOT_EXISTING_MEAL, ADMIN_ID)).isInstanceOf(NotFoundException.class);
+    public void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
-    public void updateMealWithWrongUserId(){
-        assertThatThrownBy(() -> mealService.update(ADMINS_BREAKFAST, USER_ID)).isInstanceOf(NotFoundException.class);
+    public void deleteNotOwn() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
     public void create() {
-        Meal created = mealService.create(getNewMeal(), ADMIN_ID);
-        Meal newMeal = getNewMeal();
-        newMeal.setId(created.getId());
-
-        assertThat(created).usingRecursiveComparison().isEqualTo(newMeal);
-        assertThat(created).usingRecursiveComparison().isEqualTo(mealService.get(ADMIN_ID, created.getId()));
+        Meal created = service.create(getNew(), USER_ID);
+        int newId = created.getId();
+        Meal newMeal = getNew();
+        newMeal.setId(newId);
+        MEAL_MATCHER.assertMatch(created, newMeal);
+        MEAL_MATCHER.assertMatch(service.get(newId, USER_ID), newMeal);
     }
 
     @Test
-    public void createWithDuplicateDateTime() {
-       Meal duplicate = new Meal(ADMINS_BREAKFAST);
-       duplicate.setId(null);
-       assertThrows(DataAccessException.class, () -> mealService.create(duplicate, ADMIN_ID));
+    public void duplicateDateTimeCreate() {
+        assertThrows(DataAccessException.class, () ->
+                service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
+    }
+
+
+    @Test
+    public void get() {
+        Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
+        MEAL_MATCHER.assertMatch(actual, adminMeal1);
     }
 
     @Test
-    public void deleteExistingMealWithRightUserId() {
-        assertThat(mealService.get(ADMIN_ID, ADMINS_BREAKFAST.getId())).isNotNull();
-        mealService.delete(ADMIN_ID, ADMINS_BREAKFAST.getId());
-        assertThatThrownBy(() -> mealService.get(ADMIN_ID, ADMINS_BREAKFAST.getId())).isInstanceOf(NotFoundException.class);
+    public void getNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
-    public void deleteNotExistingMeal() {
-        assertThatThrownBy(() -> mealService.delete(ADMIN_ID, NOT_EXISTING_MEAL.getId())).isInstanceOf(NotFoundException.class);
+    public void getNotOwn() {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
-    public void deleteExistingMealWithWrongUserId() {
-        assertThatThrownBy(() -> mealService.delete(USER_ID, ADMINS_BREAKFAST.getId())).isInstanceOf(NotFoundException.class);
+    public void update() {
+        Meal updated = getUpdated();
+        service.update(updated, USER_ID);
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
     }
 
     @Test
-    public void getMealWithRightUserId() {
-        assertThat(ADMINS_BREAKFAST).usingRecursiveComparison().isEqualTo(mealService.get(ADMIN_ID, ADMINS_BREAKFAST.getId()));
+    public void updateNotOwn() {
+        assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
-    public void getMealWithWrongUserId() {
-        assertThatThrownBy(() -> mealService.get(USER_ID, ADMINS_BREAKFAST.getId())).isInstanceOf(NotFoundException.class);
-    }
-
-    @Test
-    @Ignore
-    public void getBetweenInclusive() {
-        List<Meal> mealsBetween = mealService.getBetweenInclusive(BEFORE, AFTER, ADMIN_ID);
-        assertThat(mealsBetween).containsOnly(getMealsBetween());
-    }
-
-    @Test
-    @Ignore
     public void getAll() {
-        Collection<Meal> allMeals = mealService.getAll(ADMIN_ID);
-        assertThat(allMeals).containsOnly(getAllMeals());
+        MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
+    }
+
+    @Test
+    public void getBetweenInclusive() {
+        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
+                        LocalDate.of(2020, Month.JANUARY, 30),
+                        LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
+                meal3, meal2, meal1);
+    }
+
+    @Test
+    public void getBetweenWithNullDates() {
+        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
     }
 }
