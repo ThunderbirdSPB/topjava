@@ -5,7 +5,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import java.util.Collection;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import ru.javawebinar.topjava.model.Meal;
+import org.springframework.util.Assert;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,10 +23,12 @@ public class MealService {
     }
 
     public void update(Meal meal, int userId) {
-        checkNotFoundWithId(repository.save(userId, meal), meal.getId());
+        Assert.notNull(meal, "meal must not be null");
+        checkNotFoundWithId(repository.save(userId, meal), meal.id());
     }
 
     public Meal create(Meal meal, int userId) {
+        Assert.notNull(meal, "meal must not be null");
         return repository.save(userId, meal);
     }
 

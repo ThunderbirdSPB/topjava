@@ -31,6 +31,7 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
 
     @Override
     public User getByEmail(String email) {
+        Objects.requireNonNull(email, "email must not be null");
         if (email == null)
             throw new IllegalArgumentException("Email == null");
         return getCollection().stream()

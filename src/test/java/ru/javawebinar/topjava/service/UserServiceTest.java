@@ -32,7 +32,7 @@ public class UserServiceTest {
     @Test
     public void create() {
         User created = service.create(getNewUser());
-        Integer newId = created.getId();
+        int newId = created.id();
         User newUser = getNewUser();
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
