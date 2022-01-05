@@ -1,19 +1,30 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
+import org.springframework.test.context.ActiveProfiles;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -25,27 +36,56 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
+@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public class MealServiceTest {
     @Autowired
     private MealService service;
 
+    private static final Logger log = getLogger("result");
+
+    private static final StringBuilder results = new StringBuilder();
+
+    @Rule
+    // http://stackoverflow.com/questions/14892125/what-is-the-best-practice-to-determine-the-execution-time-of-the-bussiness-relev
+    public final Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            String result = String.format("\n%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            results.append(result);
+            log.info(result + " ms\n");
+        }
+    };
+
+    @AfterClass
+    public static void printResult() {
+        log.info("\n---------------------------------" +
+                "\nTest                 Duration, ms" +
+                "\n---------------------------------" +
+                results +
+                "\n---------------------------------");
+    }
+
     @Test
+    @Transactional
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
+    @Transactional
     public void deleteNotFound() {
         assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
+    @Transactional
     public void deleteNotOwn() {
         assertThrows(NotFoundException.class, () -> service.delete(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
+    @Transactional
     public void create() {
         Meal created = service.create(getNew(), USER_ID);
         int newId = created.id();
@@ -56,29 +96,34 @@ public class MealServiceTest {
     }
 
     @Test
+    @Transactional
     public void duplicateDateTimeCreate() {
-        assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
+        assertThrows(DataIntegrityViolationException.class, () ->
+                service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID)
+        );
     }
 
-
     @Test
+    @Transactional
     public void get() {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
         MEAL_MATCHER.assertMatch(actual, adminMeal1);
     }
 
     @Test
+    @Transactional
     public void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
+    @Transactional
     public void getNotOwn() {
         assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
+    @Transactional
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
@@ -86,17 +131,21 @@ public class MealServiceTest {
     }
 
     @Test
+    @Transactional
     public void updateNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> service.update(getUpdated(), ADMIN_ID));
+        Assert.assertEquals("Not found entity with id=" + MEAL1_ID, exception.getMessage());
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
+    @Transactional
     public void getAll() {
         MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test
+    @Transactional
     public void getBetweenInclusive() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
                         LocalDate.of(2020, Month.JANUARY, 30),
@@ -105,6 +154,7 @@ public class MealServiceTest {
     }
 
     @Test
+    @Transactional
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
     }

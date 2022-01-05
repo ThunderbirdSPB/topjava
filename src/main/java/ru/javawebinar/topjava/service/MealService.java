@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import java.util.Collection;
@@ -22,28 +24,32 @@ public class MealService {
         this.repository = repository;
     }
 
+    @CacheEvict(value = "meals", allEntries = true)
     public void update(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         checkNotFoundWithId(repository.save(userId, meal), meal.id());
     }
 
+    @CacheEvict(value = "meals", allEntries = true)
     public Meal create(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         return repository.save(userId, meal);
     }
 
-    public void delete(int userId, int mealId) {
-        checkNotFoundWithId(repository.delete(userId, mealId), mealId);
+    @CacheEvict(value = "meals", allEntries = true)
+    public void delete(int mealId, int userId) {
+        checkNotFoundWithId(repository.delete(mealId, userId), mealId);
     }
 
-    public Meal get(int userId, int mealId) {
-        return checkNotFoundWithId(repository.get(userId, mealId), mealId);
+    public Meal get(int mealId, int userId) {
+        return checkNotFoundWithId(repository.get(mealId, userId), mealId);
     }
 
     public List<Meal> getBetweenInclusive(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId) {
         return repository.getBetweenHalfOpen(atStartOfDayOrMin(startDate), atStartOfNextDayOrMax(endDate), userId);
     }
 
+    @Cacheable("meals")
     public Collection<Meal> getAll(int userId) {
         return repository.getAll(userId);
     }

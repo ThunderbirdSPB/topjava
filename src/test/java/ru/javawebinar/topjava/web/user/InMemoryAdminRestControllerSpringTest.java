@@ -20,6 +20,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
         "classpath:spring/inmemory.xml"
 })
 @RunWith(SpringRunner.class)
+@Ignore
 public class InMemoryAdminRestControllerSpringTest {
 
     @Autowired
@@ -34,12 +35,14 @@ public class InMemoryAdminRestControllerSpringTest {
     }
 
     @Test
+    @Ignore
     public void delete() {
         controller.delete(USER_ID);
         Assert.assertNull(repository.get(USER_ID));
     }
 
     @Test
+    @Ignore
     public void deleteNotFound() {
         Assert.assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }
