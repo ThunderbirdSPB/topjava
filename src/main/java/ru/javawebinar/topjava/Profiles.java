@@ -24,4 +24,16 @@ public class Profiles {
             throw new IllegalStateException("Could not find DB driver");
         }
     }
+
+    public static String getActiveRepoImplProfile(){
+        String activeRepoImpl = System.getProperty("spring.profiles.active");
+        if (JDBC.equalsIgnoreCase(activeRepoImpl))
+            return JDBC;
+        else if(JPA.equalsIgnoreCase(activeRepoImpl))
+            return JPA;
+        else if(DATAJPA.equalsIgnoreCase(activeRepoImpl))
+            return DATAJPA;
+        else
+            throw new IllegalStateException("Could not find out active repository implementation");
+    }
 }

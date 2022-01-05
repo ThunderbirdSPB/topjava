@@ -63,6 +63,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
+                    <systemPropertyVariables>
+                        <spring.profiles.active>DATAJPA</spring.profiles.active>
+                    </systemPropertyVariables>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
@@ -70,14 +73,6 @@
     </build>
 
     <dependencies>
-        <!-- Logging with SLF4J & LogBack -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -102,9 +97,6 @@
             <version>${spring-data-jpa.version}</version>
         </dependency>
 
-
-
-        <!--- ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -171,11 +163,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -195,7 +189,6 @@
             <version>8.0</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <profiles>
@@ -208,12 +201,12 @@
                     <version>2.3.4</version>
                 </dependency>
 
-<!--                <dependency>-->
-<!--                    <groupId>org.slf4j</groupId>-->
-<!--                    <artifactId>jul-to-slf4j</artifactId>-->
-<!--                    <version>${slf4j.version}</version>-->
-<!--                    <scope>runtime</scope>-->
-<!--                </dependency>-->
+                <!--                <dependency>-->
+                <!--                    <groupId>org.slf4j</groupId>-->
+                <!--                    <artifactId>jul-to-slf4j</artifactId>-->
+                <!--                    <version>${slf4j.version}</version>-->
+                <!--                    <scope>runtime</scope>-->
+                <!--                </dependency>-->
             </dependencies>
         </profile>
 
@@ -225,12 +218,14 @@
                     <artifactId>postgresql</artifactId>
                     <version>${postgresql.version}</version>
                 </dependency>
+
                 <dependency>
                     <groupId>org.apache.tomcat</groupId>
                     <artifactId>tomcat-jdbc</artifactId>
                     <version>${tomcat.version}</version>
                     <scope>provided</scope>
                 </dependency>
+
                 <dependency>
                     <groupId>org.slf4j</groupId>
                     <artifactId>jul-to-slf4j</artifactId>
@@ -238,30 +233,10 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
+
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-        </profile>
-
-        <profile>
-            <id>jdbc</id>
-            <dependencies>
-
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>jpa</id>
-            <dependencies>
-
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>datajpa</id>
-            <dependencies>
-
-            </dependencies>
         </profile>
     </profiles>
 
