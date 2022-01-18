@@ -64,7 +64,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <spring.profiles.active>DATAJPA</spring.profiles.active>
+                        <spring.profiles.active>datajpa</spring.profiles.active>
                     </systemPropertyVariables>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
@@ -97,6 +97,7 @@
             <version>${spring-data-jpa.version}</version>
         </dependency>
 
+        <!-- ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>

@@ -46,26 +46,22 @@ public class InMemoryAdminRestControllerTest {
     }
 
     @Test
-    @Ignore
     public void deleteExistingUser() {
         controller.delete(USER_ID);
         assertNull(repository.get(USER_ID));
     }
 
     @Test
-    @Ignore
     public void deleteNotExistingUser() {
         assertThrows(NotFoundException.class, () -> controller.delete(-1));
     }
 
     @Test
-    @Ignore
     public void getAll() {
         assertNotNull(controller.getAll());
     }
 
     @Test
-    @Ignore
     public void getAdminsId() {
         User admin = controller.get(ADMIN_ID);
         assertNotNull("user by id is null", admin);
@@ -83,7 +79,6 @@ public class InMemoryAdminRestControllerTest {
     }
 
     @Test
-    @Ignore
     public void createWithPredefinedId() {
         int userTestId = Integer.MAX_VALUE;
         User userTest = new User(userTestId, "UserTest", "testuser@yandex.ru", "password", Role.USER);
@@ -91,7 +86,6 @@ public class InMemoryAdminRestControllerTest {
     }
 
     @Test
-    @Ignore
     public void update() {
         String newEmail = "Testing.email";
         String newPassword = "Testting.password";
@@ -111,26 +105,22 @@ public class InMemoryAdminRestControllerTest {
     }
 
     @Test
-    @Ignore
     public void getByExistingMail() {
         User admin = controller.get(ADMIN_ID);
         assertEquals(admin, controller.getByMail(admin.getEmail()));
     }
 
     @Test
-    @Ignore
     public void getByNotExistingMail() {
         assertThrows(NotFoundException.class, () -> controller.getByMail("NOT_EXISTING_EMAIL"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore
     public void getByNullMail() {
         controller.getByMail(null);
     }
 
     @Test
-    @Ignore
     public void deleteNotFound() {
         assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }

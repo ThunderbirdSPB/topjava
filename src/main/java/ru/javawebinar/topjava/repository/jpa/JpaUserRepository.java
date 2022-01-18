@@ -31,6 +31,7 @@ public class JpaUserRepository implements UserRepository {
     public User save(User user) {
         if (user.isNew()) {
             em.persist(user);
+            em.flush();
             return user;
         } else {
             return em.merge(user);
