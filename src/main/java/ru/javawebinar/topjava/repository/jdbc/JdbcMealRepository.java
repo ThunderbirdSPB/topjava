@@ -6,18 +6,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public abstract class AbstractJdbcMealRepository implements MealRepository {
+@Repository
+public class JdbcMealRepository implements MealRepository {
     protected static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
     protected final JdbcTemplate jdbcTemplate;
     protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     protected final SimpleJdbcInsert insertMeal;
 
-    public AbstractJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
@@ -29,7 +33,13 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
     @Override
     // Pattern template method
     public Meal save(int userId, Meal meal) {
-        MapSqlParameterSource map = getParametersForMap(userId, meal);
+        MapSqlParameterSource map = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("id", meal.getId())
+                .addValue("description", meal.getDescription())
+                .addValue("calories", meal.getCalories())
+                .addValue("date_time", meal.getDateTime().truncatedTo(ChronoUnit.SECONDS));
+
         if (meal.isNew()) {
             Number newKey = insertMeal.executeAndReturnKey(map);
             meal.setId(newKey.intValue());
@@ -57,6 +67,10 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
         return jdbcTemplate.query("SELECT * FROM meals WHERE user_id=?", ROW_MAPPER,  userId);
     }
 
-    // implementation specific method
-    protected abstract MapSqlParameterSource getParametersForMap(int userId, Meal meal);
+    @Override
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM meals WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
+                ROW_MAPPER, userId, startDateTime, endDateTime);
+    }
 }

@@ -7,7 +7,6 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class DataJpaMealRepository implements MealRepository {
@@ -22,16 +21,13 @@ public class DataJpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(int userId, Meal meal) {
-        meal.setUser(userRepository.getById(userId));
-        if(meal.isNew()) {
-            Meal newMeal = mealRepository.save(meal);
-            mealRepository.flush();
-            return newMeal;
-        }
-        else if (get(meal.id(), userId) == null)
+        if (!meal.isNew() && get(meal.id(), userId) == null) {
             return null;
-
-        return mealRepository.save(meal);
+        }
+        meal.setUser(userRepository.getById(userId));
+        Meal m = mealRepository.save(meal);
+        mealRepository.flush();
+        return m;
     }
 
     @Override
@@ -55,5 +51,10 @@ public class DataJpaMealRepository implements MealRepository {
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return mealRepository.getBetweenHalfOpen(startDateTime, endDateTime, userId);
 
+    }
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return mealRepository.getWithUser(id, userId);
     }
 }
