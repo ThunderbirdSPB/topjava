@@ -9,12 +9,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import ru.javawebinar.topjava.web.user.AdminRestController;
+
 public class UserServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(UserServlet.class);
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("forward to users");
+        log.debug("getAll");
+        request.setAttribute("users", adminController.getAll());
         request.getRequestDispatcher("/users.jsp").forward(request, response);
+    }
+
+    private AdminRestController adminController;
+
+    @Override
+    public void init() throws ServletException {
+        WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+        adminController = springContext.getBean(AdminRestController.class);
     }
 
     @Override
