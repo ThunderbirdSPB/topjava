@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -35,6 +36,7 @@ public class JdbcMealRepository implements MealRepository {
     @Transactional
     @Override
     public Meal save(int userId, Meal meal) {
+        ValidationUtil.validate(meal);
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("user_id", userId)
                 .addValue("id", meal.getId())
