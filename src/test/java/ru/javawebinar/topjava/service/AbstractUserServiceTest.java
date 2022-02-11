@@ -23,9 +23,9 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest{
     @Transactional
     @Test
     public void create() {
-        User created = service.create(getNewUser());
+        User created = service.create(getNew());
         int newId = created.id();
-        User newUser = getNewUser();
+        User newUser = getNew();
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
         USER_MATCHER.assertMatch(service.get(newId), newUser);
@@ -71,9 +71,9 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest{
     @Transactional
     @Test
     void update() {
-        User updated = getUpdatedUser();
+        User updated = getUpdated();
         service.update(updated);
-        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdatedUser());
+        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
     }
 
     @Test
