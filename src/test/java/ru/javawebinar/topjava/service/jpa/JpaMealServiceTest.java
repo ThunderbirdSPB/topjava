@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service.jpa;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,12 +9,12 @@ import ru.javawebinar.topjava.service.MealService;
 
 import javax.persistence.PersistenceException;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.meal1;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ActiveProfiles("jpa")
-public class JpaMealServiceTest extends AbstractMealServiceTest {
+class JpaMealServiceTest extends AbstractMealServiceTest {
     @Autowired
     private MealService service;
 

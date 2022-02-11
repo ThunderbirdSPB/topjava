@@ -4,5 +4,5 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 
 @ActiveProfiles("jdbc")
-public class JdbcUserServiceTest extends AbstractUserServiceTest {
+class JdbcUserServiceTest extends AbstractUserServiceTest {
 }

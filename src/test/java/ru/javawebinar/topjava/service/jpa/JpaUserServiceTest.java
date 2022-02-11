@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.service.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,10 +11,10 @@ import ru.javawebinar.topjava.service.UserService;
 
 import javax.persistence.PersistenceException;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ActiveProfiles("jpa")
-public class JpaUserServiceTest extends AbstractUserServiceTest {
+@ActiveProfiles("jpa") 
+class JpaUserServiceTest extends AbstractUserServiceTest {
     @Autowired
     private UserService service;
 

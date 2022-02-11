@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -14,11 +14,12 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@Ignore
-public class InMemoryAdminRestControllerTest {
+
+class InMemoryAdminRestControllerTest {
     private static final Logger log = LoggerFactory.getLogger(InMemoryAdminRestControllerTest.class);
 
     private static ConfigurableApplicationContext appCtx;
@@ -26,36 +27,36 @@ public class InMemoryAdminRestControllerTest {
     private static InMemoryUserRepository repository;
 
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         appCtx = new ClassPathXmlApplicationContext("spring/inmemory.xml");
         log.info("\n{}\n", Arrays.toString(appCtx.getBeanDefinitionNames()));
         controller = appCtx.getBean(AdminRestController.class);
         repository = appCtx.getBean(InMemoryUserRepository.class);
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
 //        May cause during JUnit "Cache is not alive (STATUS_SHUTDOWN)" as JUnit share Spring context for speed
 //        http://stackoverflow.com/questions/16281802/ehcache-shutdown-causing-an-exception-while-running-test-suite
 //        appCtx.close();
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void setup() {
         // re-initialize
         repository.init();
     }
 
     @Test
-    public void deleteExistingUser() {
+    void deleteExistingUser() {
         controller.delete(USER_ID);
-        assertNull(repository.get(USER_ID));
+        Assertions.assertNull(repository.get(USER_ID));
     }
 
     @Test
-    public void deleteNotExistingUser() {
-        assertThrows(NotFoundException.class, () -> controller.delete(-1));
+    void deleteNotExistingUser() {
+        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }
 
     @Test
@@ -66,12 +67,12 @@ public class InMemoryAdminRestControllerTest {
     @Test
     public void getAdminsId() {
         User admin = controller.get(ADMIN_ID);
-        assertNotNull("user by id is null", admin);
+        assertNotNull(admin, "user by id is null");
         assertEquals(ADMIN_ID, admin.getId().intValue());
     }
 
     @Test
-    @Ignore
+    @Disabled
     //Пока нет возможности проверить наличие нововсозданного пользователя
     public void createNew() {
         String email = "testuser@yandex.ru";
@@ -117,9 +118,9 @@ public class InMemoryAdminRestControllerTest {
         assertThrows(NotFoundException.class, () -> controller.getByMail("NOT_EXISTING_EMAIL"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getByNullMail() {
-        controller.getByMail(null);
+        assertThrows(IllegalArgumentException.class, () -> controller.getByMail(null));
     }
 
     @Test
