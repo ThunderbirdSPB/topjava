@@ -4,7 +4,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.CollectionUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -76,7 +75,12 @@ public class User extends AbstractNamedEntity {
     // вместо этого поля подставится Proxy, который и должен вернуть реальный экземпляр этого поля при первом же обращении. Jackson при сериализации
     // в JSON использует все поля сущности, и при обращении к Lazy полям возникает исключение, так как сессия работы с БД в этот момент уже закрыта,
     // и нужный объект не может быть инициализирован. Чтобы Jackson игнорировал эти поля, пометим их аннотацией @JsonIgnore.
-    @JsonIgnore
+//    @JsonIgnore
+    // UPDATED:
+    // Сейчас, чтобы не сериализовать Lazy поля, мы должны пройтись по каждой сущности и вручную пометить их аннотацией @JsonIgnore.
+    // Это неудобно, засоряет код и допускает возможные ошибки. К тому же, при некоторых условиях, нам иногда нужно загрузить
+    // и в ответе передать эти Lazy поля.
+    //Чтобы запретить сериализацию Lazy полей для всего проекта, подключим в pom.xml библиотеку jackson-datatype-hibernate.
     private List<Meal> meals;
 
     public User() {
