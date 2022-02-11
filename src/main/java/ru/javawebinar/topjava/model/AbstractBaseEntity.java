@@ -1,14 +1,27 @@
 package ru.javawebinar.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+
 @MappedSuperclass
+
 // http://stackoverflow.com/questions/594597/hibernate-annotations-which-is-better-field-or-property-access
 @Access(AccessType.FIELD)
+
+// при получении JSON объектов мы можем увидеть, что Jackson сериализовал объект через геттеры (например в ответе есть поле new от метода
+// Persistable.isNew()). Чтобы учитывались только поля объектов:
+// fieldVisibility = ANY, // jackson видит все поля
+// getterVisibility = NONE, // ... но не видит геттеров
+// isGetterVisibility = NONE, //... не видит геттеров boolean полей
+// setterVisibility = NONE // ... не видит сеттеров
+@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE, setterVisibility = NONE)
 public abstract class AbstractBaseEntity implements Persistable<Integer> {
     public static final int START_SEQ = 100000;
 

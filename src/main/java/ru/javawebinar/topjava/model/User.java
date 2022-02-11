@@ -4,6 +4,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.CollectionUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -69,6 +70,13 @@ public class User extends AbstractNamedEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("dateTime DESC")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
+
+    // Если запустить приложение без @JsonIgnore и обратиться к методам REST-контроллера, то оно выбросит LazyInitializationException.
+    // Оно возникает из-за того, что у наших сущностей есть лениво загружаемые поля, отмеченные FetchType.LAZY - при загрузке сущности из базы,
+    // вместо этого поля подставится Proxy, который и должен вернуть реальный экземпляр этого поля при первом же обращении. Jackson при сериализации
+    // в JSON использует все поля сущности, и при обращении к Lazy полям возникает исключение, так как сессия работы с БД в этот момент уже закрыта,
+    // и нужный объект не может быть инициализирован. Чтобы Jackson игнорировал эти поля, пометим их аннотацией @JsonIgnore.
+    @JsonIgnore
     private List<Meal> meals;
 
     public User() {
