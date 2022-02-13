@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.Range;
@@ -81,6 +82,12 @@ public class User extends AbstractNamedEntity {
     // Это неудобно, засоряет код и допускает возможные ошибки. К тому же, при некоторых условиях, нам иногда нужно загрузить
     // и в ответе передать эти Lazy поля.
     //Чтобы запретить сериализацию Lazy полей для всего проекта, подключим в pom.xml библиотеку jackson-datatype-hibernate.
+
+    @JsonManagedReference
+    // Если не аннотировать, то com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError),
+    // потому что ссылка bidirectional, со стороны Meal аннотируем @JsonBackReference
+    // @JsonManagedReference is the forward part of reference – the one that gets serialized normally.
+    // @JsonBackReference is the back part of reference – it will be omitted from serialization.
     private List<Meal> meals;
 
     public User() {

@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
@@ -46,6 +47,11 @@ public class Meal extends AbstractBaseEntity{
     @NotNull
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
+    // Если не аннотировать, то com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError),
+    // потому что ссылка bidirectional, со стороны User аннотируем @JsonManagedReference
+    // @JsonManagedReference is the forward part of reference – the one that gets serialized normally.
+    // @JsonBackReference is the back part of reference – it will be omitted from serialization.
     private User user;
 
     public Meal() {}
