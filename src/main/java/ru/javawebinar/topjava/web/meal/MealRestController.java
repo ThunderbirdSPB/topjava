@@ -9,20 +9,21 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class MealRestController extends AbstractMealController{
-    static final String REST_URL = "/rest/meals";
+public class MealRestController extends AbstractMealController {
+    static final String REST_URL = "/rest/profile/meals";
 
+    @Override
     @GetMapping("/{id}")
     public Meal get(@PathVariable int id) {
         return super.get(id);
     }
 
+    @Override
     @GetMapping
     public List<MealTo> getAll() {
         return super.getAll();
@@ -37,24 +38,24 @@ public class MealRestController extends AbstractMealController{
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable int id, @RequestBody Meal meal) {
+    public void update(@RequestBody Meal meal, @PathVariable int id) {
         super.update(meal, id);
     }
 
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         super.delete(id);
     }
 
-    @GetMapping("/filter")
-    public List<MealTo> getBetween(@RequestParam(name = "startDate", required = false) LocalDate startDate,
-                                   @RequestParam(name = "endDate", required = false) LocalDate endDate,
-                                   @RequestParam(name = "startTime", required = false) LocalTime startTime,
-                                   @RequestParam(name = "endTime", required = false) LocalTime endTime) {
-
-        return super.getBetween(startDate, startTime, endDate, endTime);
+    @GetMapping("/between")
+    public List<MealTo> getBetween(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime) {
+        return super.getBetween(startDateTime.toLocalDate(), startDateTime.toLocalTime(), endDateTime.toLocalDate(), endDateTime.toLocalTime());
     }
 }
