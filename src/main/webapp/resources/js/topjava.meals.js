@@ -37,4 +37,21 @@ $(function () {
             ]
         })
     );
+    addAJAXFilterEventListener();
 });
+
+function addAJAXFilterEventListener(){
+    $("#filterForm").submit(function (e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+        let form = $(this);
+
+        $.ajax({
+            type: "GET",
+            url: ctx.ajaxUrl +"filter",
+            data: form.serialize(),// serializes the form's elements.
+            success: function (data) {
+                ctx.datatableApi.clear().rows.add(data).draw();
+            }
+        });
+    });
+}
