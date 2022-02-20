@@ -55,3 +55,7 @@ function addAJAXFilterEventListener(){
         });
     });
 }
+
+function dropFilter(){
+    $("#filterForm").find(":input").val('');
+}

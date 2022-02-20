@@ -31,6 +31,7 @@
             <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
         <button type="submit"><spring:message code="meal.filter"/></button>
+        <button type="button" onclick="dropFilter()"><spring:message code="common.cancel"/></button>
     </form>
     <hr>
     <button class="btn btn-primary" onclick="add()">
