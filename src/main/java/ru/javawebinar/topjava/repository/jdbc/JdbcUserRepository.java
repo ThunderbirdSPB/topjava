@@ -91,6 +91,12 @@ public class JdbcUserRepository implements UserRepository {
         return users;
     }
 
+    @Override
+    @Transactional
+    public boolean enable(int id, boolean enabled) {
+        return jdbcTemplate.update("UPDATE users SET enabled=? WHERE id=?", enabled, id) != 0;
+    }
+
     private User setRoles(User user){
         if (user != null) {
             List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_roles  WHERE user_id=?", Role.class, user.getId());

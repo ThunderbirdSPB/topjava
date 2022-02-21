@@ -44,4 +44,22 @@ $(function () {
             ]
         })
     );
+
+    addCheckBoxListener();
 });
+
+function addCheckBoxListener(){
+    $('.checkbox').change(function(e){
+        $.ajax({
+            type: "get",
+            url: "/topjava/rest/admin/users/enable",
+            data: {
+                'id':$(this).closest('tr').attr("id"),
+                'enabled': $(this).prop('checked')
+            },
+            success: function () {
+                updateTable();
+            }
+        })
+    })
+}
