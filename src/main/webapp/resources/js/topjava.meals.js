@@ -1,14 +1,26 @@
-const userAjaxUrl = "meals/";
+const mealAjaxUrl = "profile/meals/";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
-    ajaxUrl: userAjaxUrl
-};
+    ajaxUrl: mealAjaxUrl,
+    updateTable: function () {
+        $.ajax({
+            type: "GET",
+            url: mealAjaxUrl + "filter",
+            data: $("#filter").serialize()
+        }).done(updateTableByData);
+    }
+}
+
+function clearFilter() {
+    $("#filter")[0].reset();
+    $.get(mealAjaxUrl, updateTableByData);
+}
 
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
-            "paging": true,
+            "paging": false,
             "info": true,
             "columns": [
                 {
@@ -32,30 +44,9 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
     );
-    addAJAXFilterEventListener();
 });
-
-function addAJAXFilterEventListener(){
-    $("#filterForm").submit(function (e) {
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-        let form = $(this);
-
-        $.ajax({
-            type: "GET",
-            url: ctx.ajaxUrl +"filter",
-            data: form.serialize(),// serializes the form's elements.
-            success: function (data) {
-                ctx.datatableApi.clear().rows.add(data).draw();
-            }
-        });
-    });
-}
-
-function dropFilter(){
-    $("#filterForm").find(":input").val('');
-}
