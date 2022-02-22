@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.Collection;
 
 public class MealsUtil {
-    public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
     public static final List<Meal> meals = Arrays.asList(
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
