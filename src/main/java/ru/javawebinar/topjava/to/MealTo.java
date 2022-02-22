@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MealTo {
-    private final Integer id;
+public class MealTo extends BaseTo {
 
     private final LocalDateTime dateTime;
 
@@ -21,7 +20,7 @@ public class MealTo {
     public MealTo(@JsonProperty("id") Integer id, @JsonProperty("dateTime") LocalDateTime dateTime,
                   @JsonProperty("description") String description, @JsonProperty("calories") int calories,
                   @JsonProperty("excess") boolean excess) {
-        this.id = id;
+        super(id);
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;

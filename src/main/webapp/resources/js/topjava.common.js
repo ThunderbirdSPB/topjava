@@ -17,6 +17,21 @@ function add() {
     $("#editRow").modal();
 }
 
+// Запрашиваем у сервера данные о редактируемой сущности (на случай если к этому моменту данные уже были кем-то изменены).
+// Функцией .each проходимся по всем полям принятых JSON данных, ищем в форме модального окна (form = $('#detailsForm')) соответствующие
+// input элементы: form.find("input[name='" + key + "']").
+// Присваиваем полям значения .val(value). Таким образом мы заполняем форму актуальными данными пользователя.
+// Открываем модальное окно с нашей формой
+function updateRow(id) {
+    form.find(":input").val("");
+    $.get(ctx.ajaxUrl + id, function (data) {
+        $.each(data, function (key, value) {
+            form.find("input[name='" + key + "']").val(value);
+        });
+        $('#editRow').modal();
+    });
+}
+
 function deleteRow(id) {
     if (confirm('Are you sure?')) {
         $.ajax({

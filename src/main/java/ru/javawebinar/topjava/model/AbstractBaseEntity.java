@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.model;
 
 import org.hibernate.Hibernate;
-import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
+import ru.javawebinar.topjava.HasId;
 
 import javax.persistence.*;
 
@@ -21,7 +21,7 @@ import javax.persistence.*;
 //UPDATED:
 //изменим сериализацию/десериализацию полей объектов в JSON: не через аннотацию @JsonAutoDetect, а в классе JacksonObjectMapper,
 // который унаследуем от ObjectMapper (стандартный Mapper, который использует Jackson) и сделаем в нем другие настройки.
-public abstract class AbstractBaseEntity implements Persistable<Integer> {
+public abstract class AbstractBaseEntity implements HasId {
     public static final int START_SEQ = 100000;
 
     @Id
@@ -39,6 +39,7 @@ public abstract class AbstractBaseEntity implements Persistable<Integer> {
         this.id = id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -48,14 +49,10 @@ public abstract class AbstractBaseEntity implements Persistable<Integer> {
         return id;
     }
 
+    // doesn't work for hibernate lazy proxy
     public int id() {
         Assert.notNull(id, "Entity must have id");
         return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return this.id == null;
     }
 
     @Override
