@@ -6,8 +6,10 @@ import ru.javawebinar.topjava.util.UserUtil;
 
 import java.io.Serial;
 
-// объект AuthorizedUser будет хранится в сессии и для этого ему требуется сериализация средствами Java.
-// Это наследование его и всех классов-полей от маркерного интерфейса Serializable и необязательный, но желательный serialVersionUID.
+// Объект AuthorizedUser будет хранится в сессии и для этого ему требуется сериализация средствами Java.
+// При некоторых условиях Tomcat сохраняет данные сессии и ему требуется возможность их сериализации, поэтому объекты в сессии
+// (и объекты, которые в них содержатся) обязательно должны имплементировать интерфейс Serializable.
+// Например при shutdown'e Tomcat может дессериализовать данные из сесси
 public class AuthorizedUser extends org.springframework.security.core.userdetails.User {
     @Serial
     private static final long serialVersionUID = 1L;
