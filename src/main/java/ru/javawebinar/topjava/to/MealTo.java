@@ -2,18 +2,28 @@ package ru.javawebinar.topjava.to;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class MealTo extends BaseTo {
-
+    @NotNull
     private final LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(min = 5, max = 32, message = "length must be between 5 and 32 characters")
     private final String description;
 
+    @Range(min = 10, max = 10000)
+    @NotNull
     private final int calories;
 
+    @Nullable
     private final boolean excess;
 
     @JsonCreator

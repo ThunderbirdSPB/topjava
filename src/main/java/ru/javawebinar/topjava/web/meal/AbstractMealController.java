@@ -48,6 +48,14 @@ public abstract class AbstractMealController {
         return service.create(meal, userId);
     }
 
+    public void create(MealTo mealTo){
+        int userId = SecurityUtil.authUserId();
+        Meal meal = MealsUtil.createNewFromTo(mealTo);
+        log.info("create {} for user {}", meal, userId);
+        checkNew(meal);
+        service.create(meal, userId);
+    }
+
     public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
 //        log.info("update {} for user {}", meal, userId);
