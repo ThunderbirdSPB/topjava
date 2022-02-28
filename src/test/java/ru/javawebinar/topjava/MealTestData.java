@@ -3,6 +3,7 @@ package ru.javawebinar.topjava;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.Month;
@@ -32,7 +33,7 @@ public class MealTestData {
 
 
     public static final List<Meal> meals = List.of(meal7, meal6, meal5, meal4, meal3, meal2, meal1);
-    public static final List<MealTo> mealsTO = MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
+    public static final List<MealTo> mealsTO = MealsUtil.getTos(meals, UserUtil.DEFAULT_CALORIES_PER_DAY);
 
     static {
         meals.forEach(meal-> meal.setUser(UserTestData.user));
