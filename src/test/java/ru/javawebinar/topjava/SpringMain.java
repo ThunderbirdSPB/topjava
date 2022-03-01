@@ -30,7 +30,7 @@ public class SpringMain {
 //            appCtx.getEnvironment().setActiveProfiles("datajpa");
 
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
-            adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
+            adminUserController.create(new User(null, "userName", "email@mail.ru", "password", 2000, Role.ADMIN));
             System.out.println();
 
             mockAuthorize(user);

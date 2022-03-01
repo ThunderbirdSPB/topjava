@@ -23,6 +23,6 @@ class JpaUserServiceTest extends AbstractUserServiceTest {
     @Override
     public void duplicateMailCreate() {
         assertThrows(PersistenceException.class, () ->
-                service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.USER)));
+                service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass",2000, Role.USER)));
     }
 }

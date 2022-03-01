@@ -76,7 +76,7 @@ class InMemoryAdminRestControllerTest {
     //Пока нет возможности проверить наличие нововсозданного пользователя
     public void createNew() {
         String email = "testuser@yandex.ru";
-        User userTest = new User(null, "UserTest", email, "password", Role.USER);
+        User userTest = new User(null, "UserTest", email, "password",2000, Role.USER);
         controller.create(userTest);
         assertEquals(userTest, controller.getByMail(email));
     }
@@ -84,7 +84,7 @@ class InMemoryAdminRestControllerTest {
     @Test
     public void createWithPredefinedId() {
         int userTestId = Integer.MAX_VALUE;
-        User userTest = new User(userTestId, "UserTest", "testuser@yandex.ru", "password", Role.USER);
+        User userTest = new User(userTestId, "UserTest", "testuser@yandex.ru", "password",2000, Role.USER);
         assertThrows(IllegalArgumentException.class, () -> controller.create(userTest));
     }
 
