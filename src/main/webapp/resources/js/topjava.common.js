@@ -21,6 +21,16 @@ function makeEditable(datatableOpts) {
 
     // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
     $.ajaxSetup({cache: false});
+
+    // Для добавления CSRF токена в AJAX запросы в headTag.jsp объявим тэги meta с name="csrf" и name= "csrf_header",
+    // в аттрибуты content поместим значения, которые нам предоставляет Spring Security. Чтобы к каждому AJAX запросу
+    // не добавлять CSRF header, в topjava.common.js настроим через jQuery сразу все AJAX запросы. Заголовок и токен получим
+    // из тэгов meta которые мы определили в headTag.jsp.
+    let token = $("meta[name='_csrf']").attr("content");
+    let header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function (e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
 }
 
 function add() {
