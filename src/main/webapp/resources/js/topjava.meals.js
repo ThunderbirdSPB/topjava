@@ -38,7 +38,14 @@ $(function () {
     makeEditable({
         "columns": [
             {
-                "data": "dateTime"
+                "data": "dateTime",
+                "render": function (date, type, row) {
+                    if (type === 'display') {
+                        console.log("here")
+                        return date.replace('T', ' ').substr(0, 16);
+                    }
+                    return date;
+                }
             },
             {
                 "data": "description"
@@ -68,5 +75,3 @@ $(function () {
         }
     });
 });
-
-$.datetimepicker.setLocale(localeCode);
