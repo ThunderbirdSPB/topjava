@@ -68,3 +68,5 @@ $(function () {
         }
     });
 });
+
+$.datetimepicker.setLocale(localeCode);
