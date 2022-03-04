@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import ru.javawebinar.topjava.util.validation.NoHtml;
 
 @NamedQueries({
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
@@ -39,6 +40,7 @@ public class Meal extends AbstractBaseEntity{
     @Column(name = "description", nullable = false)
     @NotBlank
     @Size(min = 2, max = 120)
+    @NoHtml(groups = {View.Web.class})
     private String description;
 
     @Column(name = "calories", nullable = false)
