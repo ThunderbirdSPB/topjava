@@ -20,7 +20,7 @@ import java.net.URI;
 public class ProfileRestController extends AbstractUserController {
     static final String REST_URL = "/rest/profile";
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public User get(@AuthenticationPrincipal @ApiIgnore AuthorizedUser authUser) {
         return super.get(authUser.getId());
     }
@@ -31,7 +31,8 @@ public class ProfileRestController extends AbstractUserController {
         super.delete(authUser.getId());
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> register(@Validated(View.Web.class) @RequestBody UserTo userTo) {
         User created = super.create(userTo);
@@ -40,7 +41,7 @@ public class ProfileRestController extends AbstractUserController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Validated(View.Web.class) @RequestBody UserTo userTo, @ApiIgnore @AuthenticationPrincipal AuthorizedUser authUser) {
         super.update(userTo, authUser.getId());
@@ -51,7 +52,7 @@ public class ProfileRestController extends AbstractUserController {
         return "Русский текст";
     }
 
-    @GetMapping("/with-meals")
+    @GetMapping(value = "/with-meals", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public User getWithMeals( @ApiIgnore @AuthenticationPrincipal AuthorizedUser authUser) {
         return super.getWithMeals(authUser.getId());
     }

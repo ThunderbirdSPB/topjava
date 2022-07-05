@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static ru.javawebinar.topjava.web.json.JacksonObjectMapper.getMapper;
+import static ru.javawebinar.topjava.web.json.JsonObjectMapper.getMapper;
 
 /**
  * Утильный клас для преобразования объектов в JSON и обратно

@@ -20,18 +20,19 @@ public class AdminRestController extends AbstractUserController {
     static final String REST_URL = "/rest/admin/users";
 
     @Override
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<User> getAll() {
         return super.getAll();
     }
 
     @Override
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public User get(@PathVariable int id) {
         return super.get(id);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<User> createWithLocation(@Validated(View.Web.class) @RequestBody User user) {
         User created = super.create(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -47,19 +48,19 @@ public class AdminRestController extends AbstractUserController {
         super.delete(id);
     }
     
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Validated(View.Web.class) @RequestBody User user, @PathVariable int id) {
         super.update(user, id);
     }
 
     @Override
-    @GetMapping("/by-email")
+    @GetMapping(value = "/by-email", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public User getByMail(@RequestParam String email) {
         return super.getByMail(email);
     }
 
-    @GetMapping("/{id}/with-meals")
+    @GetMapping(value = "/{id}/with-meals", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);
     }
