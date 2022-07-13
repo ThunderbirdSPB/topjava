@@ -37,4 +37,10 @@ public class RootController {
         log.info("meals");
         return "meals";
     }
+
+    @GetMapping("/steps")
+    public String getSteps() {
+        log.info("steps");
+        return "steps";
+    }
 }

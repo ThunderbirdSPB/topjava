@@ -6,6 +6,10 @@ tr[data-meal-excess="true"] {
     color: red;
 }
 
+tr.steps td{
+    color: green;
+}
+
 .fa {
     cursor: pointer;
 }
