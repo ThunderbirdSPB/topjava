@@ -28,6 +28,7 @@ public class UserTestData {
 
     public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", 2005, Role.USER);
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", 1900, Role.ADMIN, Role.USER);
+    public static final User NOT_EXISTING_USER = new User(Integer.MAX_VALUE, "NotExisting", "NotExisting@gmail.com", "NotExisting", 1900, Role.USER);
 
     static {
         user.setMeals(meals);
