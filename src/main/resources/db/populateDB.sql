@@ -1,7 +1,7 @@
 DELETE FROM user_roles;
 DELETE FROM meals;
+DELETE FROM steps_per_day;
 DELETE FROM users;
-DELETE FROM meals;
 ALTER SEQUENCE global_seq RESTART WITH 100000;
 
 INSERT INTO users (name, email, password, calories_per_day)
@@ -23,6 +23,25 @@ VALUES ('2020-01-30 10:00:00', 'Завтрак', 500, 100000),
        ('2020-01-31 20:00:00', 'Ужин', 510, 100000),
        ('2020-01-31 14:00:00', 'Админ ланч', 510, 100001),
        ('2020-01-31 21:00:00', 'Админ ужин', 1500, 100001);
+
+INSERT INTO steps_per_day (date, number_of_steps, user_id)
+VALUES ('2020-01-30', 1000, 100001),
+       ('2020-02-01', 1100, 100001),
+       ('2020-02-02', 1100, 100001),
+       ('2020-02-03', 1110, 100001),
+       ('2020-02-04', 1120, 100001),
+       ('2020-02-05', 1130, 100001),
+       ('2020-02-06', 1140, 100001),
+       ('2020-02-07', 1150, 100001),
+       ('2020-02-08', 1060, 100001),
+       ('2020-01-30', 1000, 100000),
+       ('2020-02-01', 1100, 100000),
+       ('2020-02-02', 1100, 100000),
+       ('2020-02-03', 1110, 100000),
+       ('2020-02-04', 1120, 100000),
+       ('2020-02-05', 1130, 100000),
+       ('2020-02-06', 1140, 100000),
+       ('2020-02-07', 1150, 100000);
 
 insert into meals (user_id, date_time, description, calories) values (100001, '2020-12-19 10:07:04', 'Breakfast', 416);
 insert into meals (user_id, date_time, description, calories) values (100001, '2021-07-11 06:51:10', 'Breakfast', 2128);
@@ -130,3 +149,4 @@ insert into meals (user_id, date_time, description, calories) values (100000, '2
 insert into meals (user_id, date_time, description, calories) values (100001, '2021-08-04 11:35:03', 'Dinner', 972);
 insert into meals (user_id, date_time, description, calories) values (100000, '2021-08-14 04:23:01', 'Dinner', 1194);
 insert into meals (user_id, date_time, description, calories) values (100000, '2021-06-25 16:41:38', 'Lunch', 1671);
+

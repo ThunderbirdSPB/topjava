@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS meals;
+DROP TABLE IF EXISTS steps_per_day;
 DROP TABLE IF EXISTS user_roles;
 DROP TABLE IF EXISTS users;
 DROP SEQUENCE IF EXISTS global_seq;
@@ -35,3 +36,13 @@ CREATE TABLE meals
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX meals_unique_user_datetime_idx ON meals (user_id, date_time);
+
+CREATE TABLE steps_per_day
+(
+    id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
+    user_id             INTEGER   NOT NULL,
+    date                TIMESTAMP NOT NULL,
+    number_of_steps            INTEGER   NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX steps_unique_user_date_idx ON steps_per_day (user_id, date);
