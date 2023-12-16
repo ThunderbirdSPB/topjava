@@ -19,10 +19,10 @@ import java.util.List;
 @Repository
 @Transactional(readOnly = true)
 public class JdbcMealRepository implements MealRepository {
-    protected static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
-    protected final JdbcTemplate jdbcTemplate;
-    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    protected final SimpleJdbcInsert insertMeal;
+    private static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final SimpleJdbcInsert insertMeal;
 
     public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)

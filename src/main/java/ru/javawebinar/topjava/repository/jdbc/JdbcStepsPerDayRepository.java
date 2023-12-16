@@ -16,9 +16,9 @@ import java.util.List;
 
 @Repository
 public class JdbcStepsPerDayRepository implements StepsPerDayRepository {
-    protected static final BeanPropertyRowMapper<StepsPerDay> ROW_MAPPER = BeanPropertyRowMapper.newInstance(StepsPerDay.class);
+    private static final BeanPropertyRowMapper<StepsPerDay> ROW_MAPPER = BeanPropertyRowMapper.newInstance(StepsPerDay.class);
     private final JdbcTemplate jdbcTemplate;
-    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final SimpleJdbcInsert insert;
 
     public JdbcStepsPerDayRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
